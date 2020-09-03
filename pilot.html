@@ -1,0 +1,101 @@
+<html>
+<head>
+  <link href="keyframes.css" rel="stylesheet">
+  <style>
+
+  .the-stage {
+  	background-position: center center;
+  	background-repeat: no-repeat;
+  	background-size: cover;
+    min-height: 100vh;
+    min-width: 100vw;
+    	transition: opacity 1s ease-in-out;
+  }
+  .tracking-in-contract-bck {
+	-webkit-animation: tracking-in-contract-bck 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+	        animation: tracking-in-contract-bck 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+  }
+  .red {
+      color:red
+  }
+  </style>
+</head>
+<body>
+  <div class="the-stage" style=" background-image: url('https://s169923.gridserver.com/images/dtlarooftop.jpg')">
+  <p id="theatre" style="color:white"></p>
+</div>
+</body>
+  <script>
+
+
+//system that builds sections tallies info on sections like character count. If characer count is lower than X number then send multiple sections but if higher only send back one section. Goal is to send back 
+var section = {
+   w:["In the beginning","God","created","the heavens","and","the earth."]
+  ,i:[2,0.5,1.5,1.75,1.5,3]
+  ,b:'img/section1.png'
+  ,s:'styles/qewe.css'
+  ,n: 'api/bible/asv/1-1-2'
+  ,p: null
+}
+
+const thtr = document.getElementById("theatre")
+window.playIndex = 0
+window.wordsLength = 0
+
+function getNextSectionAuto(){
+//hard coded needs replacement
+
+return false;
+
+      return {
+         w:["And the earth","was","without form","and void."]
+        ,i:[2,1,2,3]
+        ,b:'img/section2.png'
+        ,s:'styles/qewe.css'
+        ,n: 'api/bible/asv/1-1-3'
+        ,p: 'api/bible/asv/1-1-1'
+      }
+}
+
+function sceneSetup(){
+  //thtr.textContent="";
+  section = getNextSectionAuto();
+  //section is empty
+  if (section == false) return false
+  document.getElementsByClassName('the-stage')[0].style.backgroundImage = "url('https://s169923.gridserver.com/images/winterbarrel.jpg')"
+  thtr.innerHTML=""
+  window.playIndex = 0;
+  window.wordsLength = section.w.length;
+  return true
+}
+
+function getCredits(){
+	//This function should retrieve the credits and an ad to play following the message.
+}
+
+var loop = function(){
+  setTimeout(function () {
+    if(window.playIndex < window.wordsLength){
+	console.log(window.playIndex, window.wordsLength)
+        thtr.insertAdjacentHTML('beforeend', `<span class="tracking-in-contract-bck"> ${section.w[window.playIndex]}</span>`)
+        //thtr.textContent += " " + section.w[window.playIndex]
+        loop();
+        ++window.playIndex
+    }else{
+		//check if new scene exists and keep looping
+      if(sceneSetup() != false)
+      loop();
+	  else {
+		getCredits();
+	  }
+    }
+  }, 1000 * section.i[window.playIndex]);
+}
+
+window.addEventListener("load", function(){
+  window.wordsLength = section.w.length;
+  loop();
+});
+
+</script>
+</html>
