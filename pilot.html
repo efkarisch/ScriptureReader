@@ -1,15 +1,26 @@
 <html>
 <head>
-  <link href="keyframes.css" rel="stylesheet">
-  <style>
 
-  .the-stage {
+  <link href='https://fonts.googleapis.com/css?family=Atomic%20Age' rel='stylesheet'>
+  <link href="keyframes.css" rel="stylesheet">
+
+<style>
+
+  body {
+      font-family: 'Atmoic Age';font-size: 4em;
+  }
+  .stage {
   	background-position: center center;
   	background-repeat: no-repeat;
   	background-size: cover;
     min-height: 100vh;
     min-width: 100vw;
-    	transition: opacity 1s ease-in-out;
+    transition: opacity 1s ease-in-out;
+  }
+
+  .stage#theatre {
+        z-index: 99999;
+        overflow: hidden;
   }
   .tracking-in-contract-bck {
 	-webkit-animation: tracking-in-contract-bck 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
@@ -18,84 +29,186 @@
   .red {
       color:red
   }
+
+    /* Basic background image styling. */
+  .bg-img {
+  	background-position: center center;
+  	background-repeat: no-repeat;
+  	background-size: cover;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: 800px;
+    transition: opacity 1s ease-in-out;
+    opacity: 0;
+  }
+
+  .bg-img.show {
+  	opacity: 1;
+  }
+
+  </style>
+
+
+  <style id="style-1">
+  /* Styles for the specific images. */
+  /*
+   .img-1 {
+  	background-image: url('');
+  	z-index: -3;
+  }
+
+  .img-2 {
+  	background-image: url('');
+  	z-index: -2;
+  }
+
+  .img-3 {
+  	background-image: url('https://s169923.gridserver.com/images/catalinaharbor.jpg');
+  	z-index: -1;
+  }
+  */
   </style>
 </head>
 <body>
-  <div class="the-stage" style=" background-image: url('https://s169923.gridserver.com/images/dtlarooftop.jpg')">
-  <p id="theatre" style="color:white"></p>
+  <div id="stage">
+    <div id="theatre" style="color:white; overflow:hidden;"></div>
 </div>
 </body>
   <script>
+  //open browser:   file:///home/edward/source/scriptureReader/pilot.html
 
 
-//system that builds sections tallies info on sections like character count. If characer count is lower than X number then send multiple sections but if higher only send back one section. Goal is to send back 
-var section = {
+///Features:
+/*
+* Pause on section end OR continuous play (switch)
+* Slow ---------- Fast (range slider) to act as multiplier for animations
+* Slow ---------- Fast (range slider) to act as multiplier for transitions
+*
+*/
+
+//system that builds sections tallies info on sections like character count. If characer count is lower than X number then send multiple sections but if higher only send back one section. Goal is to send back
+window.sections = [
+  {
    w:["In the beginning","God","created","the heavens","and","the earth."]
-  ,i:[2,0.5,1.5,1.75,1.5,3]
-  ,b:'img/section1.png'
-  ,s:'styles/qewe.css'
+  ,t:[2,0.5,1.5,1.75,1.5,3]
+  ,b:'https://s169923.gridserver.com/images/dtlarooftop.jpg'
+  //,s:'styles/qewe.css'
   ,n: 'api/bible/asv/1-1-2'
   ,p: null
+  ,i:1
+},
+{
+  //need to program in a null catch in the loop- []
+  //w:["And the earth","was","without form","and void.",null,"And darkness", "was over the face", "of the deep"]
+ //,t:[2,1,2,3,null,1,2,1]
+  w:["And the earth","was","without form","and void."]
+ ,t:[2,1,2,3]
+ ,b:'https://s169923.gridserver.com/images/winterbarrel.jpg'
+ //,s:'styles/qewe.css'
+ //API calls to get next and previous verses:
+ ,n: 'api/bible/asv/1-1-3'
+ ,p: 'api/bible/asv/1-1-1'
+ ,i:2
 }
+];
 
-const thtr = document.getElementById("theatre")
-window.playIndex = 0
-window.wordsLength = 0
 
-function getNextSectionAuto(){
-//hard coded needs replacement
+const loadBackgrounds = () => {
 
-return false;
+window.sections.forEach((section, i) => {
 
-      return {
-         w:["And the earth","was","without form","and void."]
-        ,i:[2,1,2,3]
-        ,b:'img/section2.png'
-        ,s:'styles/qewe.css'
-        ,n: 'api/bible/asv/1-1-3'
-        ,p: 'api/bible/asv/1-1-1'
-      }
-}
+  stage.insertAdjacentHTML('beforeend', `<div class="bg-img img-${i+1}"></div>`)
 
-function sceneSetup(){
-  //thtr.textContent="";
-  section = getNextSectionAuto();
-  //section is empty
-  if (section == false) return false
-  document.getElementsByClassName('the-stage')[0].style.backgroundImage = "url('https://s169923.gridserver.com/images/winterbarrel.jpg')"
-  thtr.innerHTML=""
-  window.playIndex = 0;
-  window.wordsLength = section.w.length;
-  return true
-}
 
-function getCredits(){
-	//This function should retrieve the credits and an ad to play following the message.
-}
+  //add stylesheet for animation effect - can pull effect from API - []
+  let style = document.createElement('style');
+  style.setAttribute("id", `bg-${i+1}`);
+  document.head.appendChild(style);
+  style.sheet.insertRule(`.img-${i+1} {
+    background-image: url("${section.b}");
+    z-index: -${window.sections.length-(i)};
+  `);
 
-var loop = function(){
-  setTimeout(function () {
-    if(window.playIndex < window.wordsLength){
-	console.log(window.playIndex, window.wordsLength)
-        thtr.insertAdjacentHTML('beforeend', `<span class="tracking-in-contract-bck"> ${section.w[window.playIndex]}</span>`)
-        //thtr.textContent += " " + section.w[window.playIndex]
-        loop();
-        ++window.playIndex
-    }else{
-		//check if new scene exists and keep looping
-      if(sceneSetup() != false)
-      loop();
-	  else {
-		getCredits();
-	  }
-    }
-  }, 1000 * section.i[window.playIndex]);
-}
-
-window.addEventListener("load", function(){
-  window.wordsLength = section.w.length;
-  loop();
 });
 
+imageEls = document.getElementsByClassName('bg-img');
+
+}
+
+const sceneSetup = () => {
+
+  let i = window.sectionIndex;
+
+  //End scene loop if no sections
+  if(!window.sections[i]) return false;
+
+  thtr.innerHTML = ""
+  window.wordsLength = window.sections[i].w.length;
+
+  //if background exists:
+  if(window.sections[i].b){
+
+    window.imgIndex++
+
+    // Show the next image.
+    imageEls[window.imgIndex].classList.add('show');
+    // Hide the previous image, skipping if first image.
+    if(window.imgIndex) imageEls[(window.imgIndex - 1)].classList.remove('show');
+
+
+
+  }//End background add
+
+    wordLoop();
+    return true;
+
+}
+
+//setup constants
+const thtr = document.getElementById("theatre"),
+ stage = document.getElementById("stage");
+
+//----------------------------------------------------
+
+window.sectionIndex = 0; // index of current section, reset after API call
+window.playIndex = 0; // # of times played
+window.wordsLength = 0; //
+window.imgIndex = -1;
+
+var imageEls;
+
+//loop the results of the API call
+const wordLoop = () => {
+
+  setTimeout(() => {
+
+    if(window.playIndex < window.wordsLength){
+
+        thtr.insertAdjacentHTML('beforeend', `<span class="tracking-in-contract-bck"> ${window.sections[window.sectionIndex].w[window.playIndex]}</span>`);
+        wordLoop();
+        ++window.playIndex
+
+    } else {
+      window.sectionIndex +=1;
+      window.playIndex = 0;
+      if(!sceneSetup()){
+        console.log("ALL DONE")
+      }
+    }
+
+  }, 1000 * window.sections[window.sectionIndex].t[window.playIndex]);
+
+}///END loop function
+
+
+//init on the page with autostart - CHA to have button - []
+window.addEventListener("load", function(){
+  loadBackgrounds();
+  sceneSetup();
+});
+
+//load stylesheets from API call for each section? y/n - [] -- depends on section setup page in app (not yet built)
 </script>
 </html>
