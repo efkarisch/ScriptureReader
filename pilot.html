@@ -1,4 +1,6 @@
 <html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <head>
 
   <link href='https://fonts.googleapis.com/css?family=Atomic%20Age' rel='stylesheet'>
@@ -6,21 +8,22 @@
 
 <style>
 
+
   body {
-      font-family: 'Atmoic Age';font-size: 4em;
+      font-family: 'Atmoic Age';font-size: 10vw;
   }
-  .stage {
+  #stage {
   	background-position: center center;
   	background-repeat: no-repeat;
   	background-size: cover;
-    min-height: 100vh;
-    min-width: 100vw;
     transition: opacity 1s ease-in-out;
   }
 
-  .stage#theatre {
+  #theatre {
         z-index: 99999;
-        overflow: hidden;
+        color:white;
+        overflow-x:hidden;
+        white-space: nowrap;
   }
   .tracking-in-contract-bck {
 	-webkit-animation: tracking-in-contract-bck 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
@@ -73,7 +76,7 @@
 </head>
 <body>
   <div id="stage">
-    <div id="theatre" style="color:white; overflow:hidden;"></div>
+    <div id="theatre"></div>
 </div>
 </body>
   <script>
@@ -203,8 +206,20 @@ const wordLoop = () => {
 }///END loop function
 
 
+const getNextSectionsAPI = () => {
+  //set sections = API call result
+}
+const getPreviousSectionsAPI = () => {
+  //set sections = API call result
+}
+
+
+///This function should retrieve the credits and an ad to play following the message.
+const getCredits = () => {}
+
+
 //init on the page with autostart - CHA to have button - []
-window.addEventListener("load", function(){
+window.addEventListener("load", () => {
   loadBackgrounds();
   sceneSetup();
 });

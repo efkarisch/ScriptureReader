@@ -38,11 +38,11 @@ function sceneSetup(){
   return true
 }
 
+
+
 function getCredits(){
-	//This function should retrieve the credits and an ad to play following the message.
+	/
 }
-
-
 
 const playWord = async (obj,w,i) => {
   console.log(w, 1000 * obj.t[i]);
